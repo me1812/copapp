@@ -5,14 +5,18 @@ import sys
 import getopt
 
 
-#class NoSuchDirectory (Exception):
-#    def __init__ (self, dirname):
-#        self.dirname = dirname
+class NoSuchDirectory (Exception):
+    def __init__ (self, dirname):
+        self.dirname = dirname
+    def __str__ (self):
+        return repr (self.dirname)
+
+
+#class NoSuchFile (Exception):
+#    def __init__(self, filename):
+#        self.filename = filename
 #    def __str__ (self):
-#        return repr (self.value)
-
-
-
+#        return repr (self.filename)
 
 
 
@@ -36,14 +40,17 @@ def acopy (dir1, dir2, filenames):
     
     ##copying each file
     for i in filepaths:
-        shutil.copy2(i, dir2)
+        try:
+            shutil.copy2(i, dir2)
+        except IOError:
+            raise NoSuchFile (i)
 
-#def checkdata (dir1, dir2, filenames):
-#
-#    ##checking for incorrect directory names
-#    for i in dir1, dir2:
-#        if os.path.exists (i) == False:
-#            raise NoSuchDirectory (i)
+def checkdata (dir1, dir2, filenames):
+
+    ##checking for incorrect directory names
+    for i in dir1, dir2:
+        if os.path.exists (i) == False:
+            raise NoSuchDirectory (i)
 
     
         
@@ -67,6 +74,7 @@ def passparam (commandline):
 
 def framer (commandline):
     dir1, dir2, filenames = passparam (commandline)
+    checkdata (dir1, dir2, filenames)
     acopy (dir1, dir2, filenames)
     ####################################################getopt
     #data = getopt.getopt (commandline, 'a')
@@ -80,7 +88,13 @@ def framer (commandline):
     #return dir1, dir2, filenames
     ################################################################
 if __name__ == "__main__": 
-    framer(sys.argv[1:])
+    try:
+        framer(sys.argv[1:])
+    except NoSuchDirectory as e:
+        print ("There is no such directory: ", e.dirname)
+
+    #except NoSuchFile as d:
+    #    print ("There is no such file: ", d.filename)
 
 
     
