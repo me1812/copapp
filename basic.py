@@ -12,11 +12,11 @@ class NoSuchDirectory (Exception):
         return repr (self.dirname)
 
 
-#class NoSuchFile (Exception):
-#    def __init__(self, filename):
-#        self.filename = filename
-#    def __str__ (self):
-#        return repr (self.filename)
+class NoSuchFile (Exception):
+    def __init__(self, filename):
+        self.filename = filename
+    def __str__ (self):
+        return repr (self.filename)
 
 
 
@@ -93,9 +93,8 @@ if __name__ == "__main__":
     except NoSuchDirectory as e:
         print ("There is no such directory: ", e.dirname)
 
-    #except NoSuchFile as d:
-    #    print ("There is no such file: ", d.filename)
-
+    except NoSuchFile as d:
+        print ("There is no such file: ", d.filename)
 
     
     
