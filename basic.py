@@ -40,10 +40,19 @@ def passparam (commandline):
     [what's left]
     '''
     print (commandline)
+    print (commandline[2:])
+    filenames = commandline[2:]
+    print (filenames)
     
-    data = getopt.getopt (commandline, 'a')
-    print (data[1])
-    return (data[1])
+    #data = getopt.getopt (commandline, 'a')
+    #print data
+    #dir1 = data[1][0]
+    #dir2 = data[1][1]
+    #filenames = data[2:]# here is a mistake connected with slicing
+    #print (dir1)
+    #print (dir2)
+    #print (filenames)
+    #return dir1, dir2, filenames
     
 if __name__ == "__main__": 
     print (sys.argv)
