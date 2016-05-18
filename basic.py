@@ -39,11 +39,14 @@ def passparam (commandline):
     getopt.getopt returns [(option, value),(option, value),]\
     [what's left]
     '''
-    print (commandline)
-    print (commandline[2:])
+    #print (commandline)
+    #print (commandline[2:])
+    dir1 = commandline[0]
+    dir2 = commandline[1]
     filenames = commandline[2:]
-    print (filenames)
-    
+    return dir1, dir2, filenames
+    #print (filenames)
+    ####################################################getopt
     #data = getopt.getopt (commandline, 'a')
     #print data
     #dir1 = data[1][0]
@@ -53,10 +56,12 @@ def passparam (commandline):
     #print (dir2)
     #print (filenames)
     #return dir1, dir2, filenames
-    
+    ################################################################
 if __name__ == "__main__": 
     print (sys.argv)
-    passparam (sys.argv[1:])
+    dir1, dir2, filenames = passparam (sys.argv[1:])
+    acopy (dir1, dir2, filenames)
+
 
     
     
