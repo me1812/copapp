@@ -32,8 +32,21 @@ class TestClasses (unittest.TestCase):
         self.assertTrue (os.path.exists ('testsource/file1'))
         self.assertTrue (os.path.exists ('testsource/file2'))
         self.assertTrue (os.path.exists ('testsource/file3'))
+        self.assertFalse (os.path.exists ('blah/blahblah'))
 
-    def test_getfilepath
+    '''
+    copies from dir1 to dir 2;
+    both dirs exist and are subdirs of cwe
+    all files exist
+    '''
+    def testAcopy1 (self):
+        basic.acopy ('testsource', 'testtarget', ['file1',\
+        'file2', 'file3'])
+        self.assertTrue (os.path.exists ('testtarget/file1'))
+        self.assertTrue (os.path.exists ('testtarget/file2'))
+        self.assertTrue (os.path.exists ('testtarget/file3'))
+    
+
     def tearDown (self):
     ##removing 
     #os.remove ('testsource/file1')
