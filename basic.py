@@ -5,8 +5,14 @@ import sys
 import getopt
 
 
-#print (os.getcwd())
-#
+#class NoSuchDirectory (Exception):
+#    def __init__ (self, dirname):
+#        self.dirname = dirname
+#    def __str__ (self):
+#        return repr (self.value)
+
+
+
 
 
 
@@ -23,6 +29,7 @@ def acopy (dir1, dir2, filenames):
 
     ##forming a list of filepaths:
     filepaths  = []# list of full paths to files to copy
+
     for i in filenames:
         filepaths.append (os.path.join (dir1, i))
     
@@ -30,6 +37,19 @@ def acopy (dir1, dir2, filenames):
     ##copying each file
     for i in filepaths:
         shutil.copy2(i, dir2)
+
+#def checkdata (dir1, dir2, filenames):
+#
+#    ##checking for incorrect directory names
+#    for i in dir1, dir2:
+#        if os.path.exists (i) == False:
+#            raise NoSuchDirectory (i)
+
+    
+        
+
+    
+    
 
 
 def passparam (commandline):
@@ -39,13 +59,15 @@ def passparam (commandline):
     getopt.getopt returns [(option, value),(option, value),]\
     [what's left]
     '''
-    #print (commandline)
-    #print (commandline[2:])
     dir1 = commandline[0]
     dir2 = commandline[1]
     filenames = commandline[2:]
     return dir1, dir2, filenames
-    #print (filenames)
+
+
+def framer (commandline):
+    dir1, dir2, filenames = passparam (commandline)
+    acopy (dir1, dir2, filenames)
     ####################################################getopt
     #data = getopt.getopt (commandline, 'a')
     #print data
@@ -58,9 +80,7 @@ def passparam (commandline):
     #return dir1, dir2, filenames
     ################################################################
 if __name__ == "__main__": 
-    print (sys.argv)
-    dir1, dir2, filenames = passparam (sys.argv[1:])
-    acopy (dir1, dir2, filenames)
+    framer(sys.argv[1:])
 
 
     
