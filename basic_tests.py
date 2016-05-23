@@ -20,10 +20,16 @@ class TestClasses (unittest.TestCase):
         f1 = open ('testsource/file1', 'w')
         f2 = open ('testsource/file2', 'w')
         f3 = open ('testsource/file3', 'w')
+        f4 = open ('testsource/file4.txt', 'w')
+        f5 = open ('testsource/file5.jpg', 'w')
+        f6 = open ('testsource/file6.mp3', 'w')
         ##closing them at once, because we won't perform any ops with
         f1.close()
         f2.close()
         f3.close()
+        f4.close()
+        f5.close()
+        f6.close()
 
 
     def testFirst (self):
@@ -46,6 +52,28 @@ class TestClasses (unittest.TestCase):
         self.assertTrue (os.path.exists ('testtarget/file2'))
         self.assertTrue (os.path.exists ('testtarget/file3'))
     
+    '''
+    both dirs exist and are subdirs of cwe
+    a full path to the file is given, not a name
+    '''
+    def testAcopy2 (self):
+        basic.acopy ('testsource', 'testtarget',\
+        ['/home/dragonpython/projects/my_applications/copapp/testsource/file5.jpg'])
+        self.assertTrue (os.path.exists ('testtarget/file5.jpg'))
+    '''
+    both dirs exist and are subdirs of cwe
+    a directory/name format path to the file is given, not a name
+    '''
+    def testAcopy3 (self):
+        pass
+
+    def testListDirectory1 (self):
+        result = basic.listDirectory ('testsource', ['.jpg', '.mp3'])
+        if 'testsource/file5.jpg' in result:
+            self.assertTrue
+        if 'testsource/file6.mp3' in result:
+            self.assertTrue
+        self.assertEqual (len(result), 2)
 
     def tearDown (self):
     ##removing 
