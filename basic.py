@@ -4,6 +4,7 @@ import shutil
 import sys
 import getopt
 
+#must check if I didn't give enough parameters to the programm
 
 class NoSuchDirectory (Exception):
     def __init__ (self, dirname):
@@ -30,21 +31,28 @@ def listDirectory (directory, fileExtList):
     return list of filepaths in format: directory/filename
 
     '''
-    ##normalising every file path, for specific platform
-    fileNames = [os.path.normcase(f) for f in os.listdir(directory)] 
-    ##for every file where extension in fileExtList-> get full path
-    filePaths = [os.path.join (directory, f) for f in fileNames\
+    ###normalising every file path, for specific platform
+    #fileNames = [os.path.normcase(f) for f in os.listdir(directory)] 
+    ###for every file where extension in fileExtList-> get full path
+    #filePaths = [os.path.join (directory, f) for f in fileNames\
+    #if os.path.splitext(f)[1] in fileExtList]
+    ##returns of list of files, with their path
+    #return filePaths
+
+    fileNames = [os.path.normcase(f) for f in os.listdir(directory)]
+    filteredNames = [f for f in fileNames\
     if os.path.splitext(f)[1] in fileExtList]
-    #returns of list of files, with there relative path
-    return filePaths
+    return filteredNames
 
 
 def acopy (dir1, dir2, filenames):
     '''
     dir1 - source directory
-        - in some cases can be current directory
     dir2 - destination directory
-    filenames = a list of filenames
+    filenames = a list of filenames (full paths or names
+                                    blank seperator)
+    if wrong filename given -> NoSuchFile exception
+
 
 
     '''
@@ -64,11 +72,10 @@ def acopy (dir1, dir2, filenames):
             raise NoSuchFile (i)
 
 def checkdata (dir1, dir2, filenames):
+    '''
+    checking for incorrect directory names
 
-    ## checking for too few arguments
-    #if filenames == False:
-        
-    ##checking for incorrect directory names
+    '''
     for i in dir1, dir2:
         if os.path.exists (i) == False:
             raise NoSuchDirectory (i)

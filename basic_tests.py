@@ -20,9 +20,19 @@ class TestClasses (unittest.TestCase):
         f1 = open ('testsource/file1', 'w')
         f2 = open ('testsource/file2', 'w')
         f3 = open ('testsource/file3', 'w')
+        ##########################################files with ext
         f4 = open ('testsource/file4.txt', 'w')
         f5 = open ('testsource/file5.jpg', 'w')
         f6 = open ('testsource/file6.mp3', 'w')
+        ##########################################files one dir up
+        os.mkdir ('../testsource1')
+        os.mkdir ('../testtarget1')
+        f7 = open ('../testsource1/outerfile1.txt', 'w')
+        f8 = open ('../testsource1/outerfile2.jpg', 'w')
+        f9 = open ('../testsource1/outerfile3.mp3', 'w')
+        
+
+
         ##closing them at once, because we won't perform any ops with
         f1.close()
         f2.close()
@@ -30,6 +40,9 @@ class TestClasses (unittest.TestCase):
         f4.close()
         f5.close()
         f6.close()
+        f7.close()
+        f8.close()
+        f9.close()
 
 
     def testFirst (self):
@@ -71,6 +84,12 @@ class TestClasses (unittest.TestCase):
     #    self.assertTrue (os.path.exists ('testtarget/file1'))
         
 
+    '''
+    both dirs exist and are one directory above cwe
+    '''
+    def testAcopy4 (self):
+        pass
+
     def testListDirectory1 (self):
         result = basic.listDirectory ('testsource', ['.jpg', '.mp3'])
         if 'testsource/file5.jpg' in result:
@@ -78,6 +97,29 @@ class TestClasses (unittest.TestCase):
         if 'testsource/file6.mp3' in result:
             self.assertTrue
         self.assertEqual (len(result), 2)
+
+
+    '''
+    files in the above cwd directory
+    '''
+    def testListDirectory2 (self):
+        result = basic.listDirectory ('../testsource1', ['.jpg', '.mp3'])
+
+        if '../testsource1/file5.jpg' in result:
+            self.assertTrue
+        if '../testsource1/file6.mp3' in result:
+            self.assertTrue
+        self.assertEqual (len(result), 2)
+
+    '''
+    basic connection with acopy
+    '''
+    def testListDirectory3 (self):
+        result = basic.listDirectory ('testsource', ['.jpg', '.mp3'])
+        basic.acopy ('testsource','testtarget',  result)
+        self.assertTrue (os.path.exists ('testtarget/file5.jpg'))
+        self.assertTrue (os.path.exists ('testtarget/file6.mp3'))
+        self.assertFalse (os.path.exists ('testtarget/file4.txt'))
 
     def tearDown (self):
     ##removing 
@@ -87,6 +129,8 @@ class TestClasses (unittest.TestCase):
 
         shutil.rmtree ('testsource')
         shutil.rmtree('testtarget')
+        shutil.rmtree ('../testsource1')
+        shutil.rmtree ('../testtarget1')
     
 
     
