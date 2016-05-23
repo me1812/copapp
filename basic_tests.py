@@ -60,12 +60,16 @@ class TestClasses (unittest.TestCase):
         basic.acopy ('testsource', 'testtarget',\
         ['/home/dragonpython/projects/my_applications/copapp/testsource/file5.jpg'])
         self.assertTrue (os.path.exists ('testtarget/file5.jpg'))
-    '''
-    both dirs exist and are subdirs of cwe
-    a directory/name format path to the file is given, not a name
-    '''
-    def testAcopy3 (self):
-        pass
+
+    #'''
+    #both dirs exist and are subdirs of cwe
+    #a directory/name format path to the file is given, not a name
+    #logically, doesn't work this way
+    #'''
+    #def testAcopy3 (self):
+    #    basic.acopy ('testsource', 'testtarget', ['testsource/file1'])
+    #    self.assertTrue (os.path.exists ('testtarget/file1'))
+        
 
     def testListDirectory1 (self):
         result = basic.listDirectory ('testsource', ['.jpg', '.mp3'])

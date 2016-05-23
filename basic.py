@@ -35,7 +35,7 @@ def listDirectory (directory, fileExtList):
     ##for every file where extension in fileExtList-> get full path
     filePaths = [os.path.join (directory, f) for f in fileNames\
     if os.path.splitext(f)[1] in fileExtList]
-    #returns of list of files, with there full paths
+    #returns of list of files, with there relative path
     return filePaths
 
 
