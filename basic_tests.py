@@ -2,6 +2,7 @@ import basic
 import unittest
 import os
 import shutil
+import shelve
 
 class TestClasses (unittest.TestCase):
 
@@ -15,6 +16,7 @@ class TestClasses (unittest.TestCase):
         ## creating source and target directories
         os.mkdir ('testsource')
         os.mkdir ('testtarget')
+        #####################################################
         ##opening a number of files to copy
 
         f1 = open ('testsource/file1', 'w')
@@ -24,15 +26,16 @@ class TestClasses (unittest.TestCase):
         f4 = open ('testsource/file4.txt', 'w')
         f5 = open ('testsource/file5.jpg', 'w')
         f6 = open ('testsource/file6.mp3', 'w')
+        f10 = open ('testsource/file10.tex', 'w')
         ##########################################files one dir up
-        os.mkdir ('../testsource1')
+        os.mkdir ('../testsource1') #creating a dir above current
         os.mkdir ('../testtarget1')
         f7 = open ('../testsource1/outerfile1.txt', 'w')
         f8 = open ('../testsource1/outerfile2.jpg', 'w')
         f9 = open ('../testsource1/outerfile3.mp3', 'w')
         
 
-
+        ############################################################# 
         ##closing them at once, because we won't perform any ops with
         f1.close()
         f2.close()
@@ -45,6 +48,7 @@ class TestClasses (unittest.TestCase):
         f9.close()
 
 
+
     def testFirst (self):
         self.assertTrue (os.path.exists ('testsource'))
         self.assertTrue (os.path.exists ('testtarget'))
@@ -52,6 +56,7 @@ class TestClasses (unittest.TestCase):
         self.assertTrue (os.path.exists ('testsource/file2'))
         self.assertTrue (os.path.exists ('testsource/file3'))
         self.assertFalse (os.path.exists ('blah/blahblah'))
+
 
     '''
     copies from dir1 to dir 2;
@@ -64,6 +69,9 @@ class TestClasses (unittest.TestCase):
         self.assertTrue (os.path.exists ('testtarget/file1'))
         self.assertTrue (os.path.exists ('testtarget/file2'))
         self.assertTrue (os.path.exists ('testtarget/file3'))
+   
+
+        
     
     '''
     both dirs exist and are subdirs of cwe
@@ -121,6 +129,34 @@ class TestClasses (unittest.TestCase):
         self.assertTrue (os.path.exists ('testtarget/file6.mp3'))
         self.assertFalse (os.path.exists ('testtarget/file4.txt'))
 
+
+
+    def testdefaultFormats1 (self):
+        formats = basic.defaultFormats()
+        
+        self.assertTrue (os.path.exists ('ext_formats.db'))
+
+
+        myShelf = shelve.open ('ext_formats.db')
+        
+        if 'formats' in myShelf:
+            self.assertTrue
+        
+        default =\
+        {'.jpg':True,'.mp3':True,'.tex':True,'.txt':False}
+        
+        #for i in default if i in myShelf['formats'].keys())
+        for i in default:
+            self.assertTrue ( i in myShelf['formats'].keys())
+
+    def testdefaultFormats2 (self):
+        
+        self.assertFalse (os.path.exists ('ext_formats.db'))
+
+        
+        
+        
+
     def tearDown (self):
     ##removing 
     #os.remove ('testsource/file1')
@@ -131,7 +167,11 @@ class TestClasses (unittest.TestCase):
         shutil.rmtree('testtarget')
         shutil.rmtree ('../testsource1')
         shutil.rmtree ('../testtarget1')
-    
+        
+        try: #that is, if there is such a file
+            os.remove ('ext_formats.db')
+        except:
+            pass
 
     
 if __name__ == '__main__':

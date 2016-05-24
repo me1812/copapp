@@ -1,10 +1,12 @@
 #!/usr/bin/python
 import os
-import shutil
+import shutil #used for copying files
 import sys
-import getopt
+import getopt #not used so far
+import shelve
 
-#must check if I didn't give enough parameters to the programm
+# tuples - what are they and why they
+# bolean
 
 class NoSuchDirectory (Exception):
     def __init__ (self, dirname):
@@ -21,6 +23,82 @@ class NoSuchFile (Exception):
 
 #def createlog (destination = )
 
+#def defaultFormats():
+#    formats = [('.jpg', True),('.mp3', True),('.tex', True),('.txt', False)]
+#    myShelf = shelve.open ('ext_formats.db', writeback = True)
+#    myShelf['formats'] = formats
+#    myShelf.close()
+#    return formats
+#
+#def accessFormats():
+#    myShelf  = shelve.open ('ext_formats.db', writeback = True)
+#    try:
+#        formats = myShelf['formats']
+#    except:
+#        formats = defaultFormats()
+#    finally:
+#        myShelf.close()
+#        return  formats
+#        
+#def changeFormats(action, what):
+#    formats = accessFormats()
+#    if action == 'add':
+#        to append = (what, True)
+#        formats.append (what)
+#    if action == 'delete':
+#        try:
+#            formatwriteFormats(formats)
+#        except KeyError:
+#            pass
+#    writeFormats(formats)
+#        
+#def changeValFormats(what, how):
+#    formats = accessFormats()
+
+    
+    
+def defaultFormats():
+    formats = {'.jpg':True,'.mp3':True,'.tex':True,'.txt':False}
+    myShelf = shelve.open ('ext_formats.db', writeback = True)
+    myShelf['formats'] = formats
+    myShelf.close()
+    return formats
+
+def accessFormats():
+    myShelf  = shelve.open ('ext_formats.db', writeback = True)
+    try:
+        formats = myShelf['formats']
+    except:
+        formats = defaultFormats()
+    finally:
+        myShelf.close()
+        # here I should turn a dict into a list
+        formats = formats.keys()
+        return  formats
+
+def writeFormats (formats):
+    myShelf  = shelve.open ('ext_formats.db', writeback = True)
+    myShelf['formats'] = formats
+    
+def changeFormats(action, what):
+    formats = accessFormats()
+    if action == 'add':
+        if what not in formats:
+            formats[what] = True
+    if action == 'delete':
+        try:
+            formats.pop (what)
+        except KeyError:
+            pass
+    writeFormats(formats)
+        
+def changeValFormats(what, how):
+    formats = accessFormats()
+    if what in formats:
+        formats[what] = how
+    else:
+        raise KeyError
+        
 
 def listDirectory (directory, fileExtList):
     '''
@@ -71,7 +149,7 @@ def acopy (dir1, dir2, filenames):
         except IOError:
             raise NoSuchFile (i)
 
-def checkdata (dir1, dir2, filenames):
+def checkdata (dir1, dir2):
     '''
     checking for incorrect directory names
 
@@ -90,7 +168,10 @@ def checkdata (dir1, dir2, filenames):
 def passparam (commandline):
     '''
     takes sys.argv without a reference to the current programm
-    
+   
+    used for interaction with user, checking what options are 
+    passed to the programm, etc. 
+
     getopt.getopt returns [(option, value),(option, value),]\
     [what's left]
     '''
@@ -103,12 +184,44 @@ def passparam (commandline):
     return dir1, dir2, filenames
 
 
+
 def framer (commandline):
+    '''
+    for version 1.0 
+    commandline arguments: dir1, dir2, files to copy
+    '''
+    ## checking that the script receives enough arguments
     if len (commandline) < 3:
         raise TypeError
     dir1, dir2, filenames = passparam (commandline)
-    checkdata (dir1, dir2, filenames)
+    checkdata (dir1, dir2)
     acopy (dir1, dir2, filenames)
+
+
+
+
+def framer1 (commandline):
+    '''
+    
+    for version 1.1
+    the programm takes source folder and target folder as args;
+    chooses which files to copy according to the presaved list of
+    requried FILE EXTENSIONS
+    makes a copy
+
+    KEY FUNCTIONS:
+    accessFormats() - retrieves the presaved list
+    listDirectory-  that makes a list of files to be copied
+    
+    '''
+    if len (commandline) < 2:
+        raise TypeError
+    dir1, dir2 = passparam (commandline)
+    checkdata (dir1, dir2)
+    formats=accessFormats()
+    fileNames = listDirectory (dir1, formats )
+    acopy (dir1, dir2, fileNames)
+
     ####################################################getopt
     #data = getopt.getopt (commandline, 'a')
     #print data
