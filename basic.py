@@ -64,7 +64,12 @@ def defaultFormats():
     myShelf.close()
     return formats
 
+
+
 def accessFormats():
+    '''
+    returns a list of formats that are True
+    '''
     myShelf  = shelve.open ('ext_formats.db', writeback = True)
     try:
         formats = myShelf['formats']
@@ -81,23 +86,36 @@ def accessFormats():
         #formats = formats.keys()
         return  true_formats
 
-def writeFormats (formats):
+def writeFormats (new_formats):
+    '''
+        takes the dict
+        overwrites the db
+    '''
     myShelf  = shelve.open ('ext_formats.db', writeback = True)
-    myShelf['formats'] = formats
+    myShelf['formats'] = {}
+    for i in new_formats:
+        myShelf['formats'][i] = True
     myShelf.close()
-    
+   
+################################################NOT TO USE YET
+
 def changeFormats(action, what):
-    formats = accessFormats()
+    '''
+    
+    '''
+    myShelf  = shelve.open ('ext_formats.db', writeback = True)
     if action == 'add':
-        if what not in formats:
-            formats[what] = True
+        all_keys = myShelf['formats'].keys()
+        for i in what:
+            if i not in all_keys:
+                myShelf['formats'][i] = True
     if action == 'delete':
         try:
-            formats.pop (what)
+            myShelf['formats'].pop (what)
         except KeyError:
             pass
-    writeFormats(formats)
-        
+    myShelf.close()
+###################################################
 def changeValFormats(what, how):
     formats = accessFormats()
     if what in formats:
@@ -241,7 +259,7 @@ def framer1 (commandline):
     ################################################################
 if __name__ == "__main__": 
     try:
-        framer(sys.argv[1:])
+        framer1(sys.argv[1:])
     except NoSuchDirectory as e:
         print ("There is no such directory: ", e.dirname)
 

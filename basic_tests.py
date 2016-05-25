@@ -203,7 +203,7 @@ class TestClasses (unittest.TestCase):
         
 
     '''
-    overwriting existing list
+    overwriting existing file
     '''
     def testWriteFormats1(self):
         myShelf = shelve.open ('ext_formats.db', writeback=True)
@@ -274,7 +274,32 @@ class TestClasses (unittest.TestCase):
         self.assertEqual (len(os.listdir('testtarget')), 3)
        
 
-    
+    '''
+    adding a new extension
+    '''
+    def testChangeFormats (self):
+
+        basic. defaultFormats()
+        basic.changeFormats ('add', ['.avi'])
+
+        myShelf = shelve.open ('ext_formats.db')
+        formats = myShelf['formats'].keys()
+        myShelf.close()
+       
+        ##checking complete list in the extlist
+        supposed = ['.jpg','.mp3','.tex', 'txt', 'avi']
+
+        self.assertTrue ('.jpg' in formats)
+        self.assertTrue ('.mp3' in formats)
+        self.assertTrue ('.tex' in formats)
+        self.assertTrue ('.txt' in formats)
+        self.assertTrue ('.avi' in formats)
+
+        self.assertEqual (len(formats), len(supposed))
+
+    #    ## checking that correct values are True
+
+        
 
         
 
