@@ -95,8 +95,6 @@ class TestClasses (unittest.TestCase):
     '''
     both dirs exist and are one directory above cwe
     '''
-    def testAcopy4 (self):
-        pass
 
     def testListDirectory1 (self):
         result = basic.listDirectory ('testsource', ['.jpg', '.mp3'])
@@ -130,7 +128,9 @@ class TestClasses (unittest.TestCase):
         self.assertFalse (os.path.exists ('testtarget/file4.txt'))
 
 
-
+    '''
+    checking the proper creation of db and dictionary
+    '''
     def testdefaultFormats1 (self):
         formats = basic.defaultFormats()
         
@@ -149,12 +149,133 @@ class TestClasses (unittest.TestCase):
         for i in default:
             self.assertTrue ( i in myShelf['formats'].keys())
 
+    '''
+    there is no presaved list- generating default
+    '''
+    def testaccessFormats1 (self): 
+        formats = basic.accessFormats()
+
+        default = ['.jpg','.mp3','.tex']
+        for i in default:
+            self.assertTrue (i in formats)
+
+        self.assertEqual (len(formats), len(default))
+
+
+    '''
+    there is a presaved list - should return all its True valued keys
+
+    creating presaved list manually
+    '''
+    def testaccessFormats2 (self):
+
+        myShelf = shelve.open ('ext_formats.db', writeback=True)
+
+        default =\
+        {'.jpg':True,'.mp3':True,'.tex':True,'.txt':False}
+
+        myShelf['formats'] = default
+
+        myShelf.close()
+
+        self.testaccessFormats1()
+
+        #formats = basic.accessFormats()
+
+        #default = ['.jpg','.mp3','.tex']
+        #for i in default:
+        #    self.assertTrue (i in formats)
+
+        #self.assertEqual (len(formats), len(default))
+
+
+        #myShelf.close()
+
+    '''
+
+    there is a presaved list - should return all its True valued keys
+
+    creating presaved list with basic.defaultFormats()
+    '''
+    def testaccessFormats3 (self):
+        formats = basic.defaultFormats()
+        self.testaccessFormats1()
+        
+
+    '''
+    overwriting existing list
+    '''
+    def testWriteFormats1(self):
+        myShelf = shelve.open ('ext_formats.db', writeback=True)
+
+        default =\
+        {'.jpg':True,'.mp3':True,'.tex':True,'.txt':False}
+
+        new = \
+        {'.avi':True,'.mpeg':True,'.doc':True,'.adoc':False}
+        myShelf['formats'] = default
+
+        myShelf.close()
+
+        basic.writeFormats (new)
+
+        myShelf = shelve.open ('ext_formats.db', writeback=True)
+        formats = myShelf['formats']
+        myShelf.close()
+        
+        for i in new:
+            self.assertTrue (i in formats)
+
+        self.assertEqual (len(formats), len(new))
+
+        
+    '''
+    writing list anew
+    '''
+    def testWriteFormats2(self):
+
+        new = \
+        {'.avi':True,'.mpeg':True,'.doc':True,'.adoc':False}
+
+
+        basic.writeFormats (new)
+
+        myShelf = shelve.open ('ext_formats.db', writeback=True)
+        formats = myShelf['formats']
+        myShelf.close()
+        
+        for i in new:
+            self.assertTrue (i in formats)
+
+        self.assertEqual (len(formats), len(new))
+
+    '''
+    checking that tearDown works properly with ext_formats.db 
+    '''
     def testdefaultFormats2 (self):
         
         self.assertFalse (os.path.exists ('ext_formats.db'))
 
-        
-        
+       
+    '''
+    no preexisting extentions list
+        f4 = open ('testsource/file4.txt', 'w')
+        f5 = open ('testsource/file5.jpg', 'w')
+        f6 = open ('testsource/file6.mp3', 'w')
+        f10 = open ('testsource/file10.tex', 'w')
+    formats = {'.jpg':True,'.mp3':True,'.tex':True,'.txt':False}
+    '''
+    def testframer11 (self):
+        basic.framer1 (['testsource', 'testtarget'])
+        self.assertTrue (os.path.exists ('testtarget/file5.jpg'))
+        self.assertTrue (os.path.exists ('testtarget/file6.mp3'))
+        self.assertTrue (os.path.exists ('testtarget/file10.tex'))
+        self.assertFalse (os.path.exists('testtarget/file4.txt'))
+        self.assertEqual (len(os.listdir('testtarget')), 3)
+       
+
+    
+
         
 
     def tearDown (self):

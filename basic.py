@@ -72,13 +72,19 @@ def accessFormats():
         formats = defaultFormats()
     finally:
         myShelf.close()
-        # here I should turn a dict into a list
-        formats = formats.keys()
-        return  formats
+        # here I should turn a dict into a list, of True valued keys
+        true_formats = []
+        for i in formats:
+            if formats[i] == True:
+                true_formats.append(i)
+                
+        #formats = formats.keys()
+        return  true_formats
 
 def writeFormats (formats):
     myShelf  = shelve.open ('ext_formats.db', writeback = True)
     myShelf['formats'] = formats
+    myShelf.close()
     
 def changeFormats(action, what):
     formats = accessFormats()
@@ -179,9 +185,9 @@ def passparam (commandline):
     print (dir1)
     dir2 = commandline[1]
     print (dir2)
-    filenames = commandline[2:]
-    print (filenames)
-    return dir1, dir2, filenames
+    #filenames = commandline[2:]
+    #print (filenames)
+    return dir1, dir2
 
 
 
