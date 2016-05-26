@@ -83,11 +83,16 @@ def accessFormats(items_to_display = True):
             for i in formats:
                 if formats[i] == True:
                     final_formats.append(i)
-        else:
+        if items_to_display == 'all':
             final_formats = []
             for i in formats:
                 final_formats.append(i)
         #formats = formats.keys()
+        if items_to_display == False:
+            final_formats = []
+            for i in formats:
+                if formats[i] == False:
+                    final_formats.append(i)
         return  final_formats
 
 def writeFormats (new_formats):
