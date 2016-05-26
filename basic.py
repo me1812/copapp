@@ -66,7 +66,7 @@ def defaultFormats():
 
 
 
-def accessFormats():
+def accessFormats(items_to_display = True):
     '''
     returns a list of formats that are True
     '''
@@ -78,13 +78,17 @@ def accessFormats():
     finally:
         myShelf.close()
         # here I should turn a dict into a list, of True valued keys
-        true_formats = []
-        for i in formats:
-            if formats[i] == True:
-                true_formats.append(i)
-                
+        if items_to_display == True:
+            final_formats = []
+            for i in formats:
+                if formats[i] == True:
+                    final_formats.append(i)
+        else:
+            final_formats = []
+            for i in formats:
+                final_formats.append(i)
         #formats = formats.keys()
-        return  true_formats
+        return  final_formats
 
 def writeFormats (new_formats):
     '''
