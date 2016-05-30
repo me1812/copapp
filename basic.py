@@ -4,6 +4,7 @@ import shutil #used for copying files
 import sys
 import getopt #not used so far
 import shelve
+import re
 
 # tuples - what are they and why they
 # bolean
@@ -58,8 +59,8 @@ class NoSuchFile (Exception):
     
     
 def defaultFormats():
-    formats = {'.jpg':True,'.mp3':True,'.tex':True,'.txt':False}
-    nonformats = {'tex':True}
+    formats = {'.*\.jpg':True,'.*\.mp3':True,'.*\.tex':True,'.*\.txt':False}
+    nonformats = {'ab.*':True}
     myShelf = shelve.open ('ext_formats.db', writeback = True)
     myShelf['formats'] = formats
     myShelf['nonformats'] = nonformats
@@ -68,13 +69,15 @@ def defaultFormats():
 
 
 
-def accessFormats(items_to_display = True):
+def accessFormats(items_to_display = True, whichlist = 'formats'):
     '''
     returns a list of formats that are True
     '''
+
+    
     myShelf  = shelve.open ('ext_formats.db', writeback = True)
     try:
-        formats = myShelf['formats']
+        formats = myShelf[whichlist]
     except:
         formats = defaultFormats()
         formats = formats[0]
@@ -136,27 +139,52 @@ def changeValFormats(what, how):
         raise KeyError
         
 
-def listDirectory (directory, fileExtList):
-    '''
-    takes 2 arguments:
-        -- directory - full path to the directory
-        -- fileExtList - [.jpg, .jpeg, .mp3, .MP3]
-
-    return list of filepaths in format: directory/filename
-
-    '''
-    ###normalising every file path, for specific platform
-    #fileNames = [os.path.normcase(f) for f in os.listdir(directory)] 
-    ###for every file where extension in fileExtList-> get full path
-    #filePaths = [os.path.join (directory, f) for f in fileNames\
-    #if os.path.splitext(f)[1] in fileExtList]
-    ##returns of list of files, with their path
-    #return filePaths
-
-    fileNames = [os.path.normcase(f) for f in os.listdir(directory)]
-    filteredNames = [f for f in fileNames\
-    if os.path.splitext(f)[1] in fileExtList]
+#def listDirectory (directory, ExtList ):
+#    '''
+#    WORKS FOR EXTENSIONS LIST ONLY
+#
+#    takes 2 arguments:
+#        -- directory - full path to the directory
+#        -- fileExtList - [.jpg, .jpeg, .mp3, .MP3]
+#
+#    return list of filepaths in format: directory/filename
+#
+#    '''
+#    ###normalising every file path, for specific platform
+#    #fileNames = [os.path.normcase(f) for f in os.listdir(directory)] 
+#    ###for every file where extension in fileExtList-> get full path
+#    #filePaths = [os.path.join (directory, f) for f in fileNames\
+#    #if os.path.splitext(f)[1] in fileExtList]
+#    ##returns of list of files, with their path
+#    #return filePaths
+#
+#    fileNames = [os.path.normcase(f) for f in os.listdir(directory)]
+#    filteredNames = [f for f in fileNames\
+#    if os.path.splitext(f)[1] in fileExtList]
+#    return filteredNames
+    
+def listDirectory (directory, formatstuple):
+    formats, nonformats = formatstuple
+    fileNames =[os.path.normcase(f) for f in os.listdir (directory)]
+    print ("these are the list of name the program receives")
+    print (fileNames)
+    filteredNames = []
+    for name in fileNames:
+        for pattern in formats:
+            print ("move through formats")
+            match = re.search (pattern, str(name) )
+            if match:
+                print ("found a match in formats, which is", pattern)
+                for nonpattern in nonformats:
+                    print ("now gonna check with nonformats, i.e", nonformats)
+                    match = re.search (nonpattern, str(name) )
+                    if not match:
+                        print ("about to append", name)
+                        filteredNames.append(name)
+    print ("these are names the program returns")
+    print (filteredNames)
     return filteredNames
+    
 
 
 def acopy (dir1, dir2, filenames):
@@ -254,8 +282,9 @@ def framer1 (commandline):
         raise TypeError
     dir1, dir2 = passparam (commandline)
     checkdata (dir1, dir2)
-    formats=accessFormats()
-    fileNames = listDirectory (dir1, formats )
+    formats =accessFormats() #dependent on args, returns dif lists
+    nonformats = accessFormats(whichlist = 'nonformats')
+    fileNames = listDirectory (dir1, (formats, nonformats))
     acopy (dir1, dir2, fileNames)
 
     ####################################################getopt

@@ -3,6 +3,7 @@ import unittest
 import os
 import shutil
 import shelve
+import re
 
 class TestClasses (unittest.TestCase):
 
@@ -27,6 +28,7 @@ class TestClasses (unittest.TestCase):
         f5 = open ('testsource/file5.jpg', 'w')
         f6 = open ('testsource/file6.mp3', 'w')
         f10 = open ('testsource/file10.tex', 'w')
+        toexclude1 = open ('testsource/blahblah.mp3', 'w')
         ##########################################files one dir up
         os.mkdir ('../testsource1') #creating a dir above current
         os.mkdir ('../testtarget1')
@@ -97,19 +99,25 @@ class TestClasses (unittest.TestCase):
     '''
 
     def testListDirectory1 (self):
-        result = basic.listDirectory ('testsource', ['.jpg', '.mp3'])
+        result = basic.listDirectory ('testsource',
+        (['.*\.jpg','.*\.mp3'],['ab.*']))
         if 'testsource/file5.jpg' in result:
             self.assertTrue
         if 'testsource/file6.mp3' in result:
             self.assertTrue
-        self.assertEqual (len(result), 2)
+
+        if 'testsource/blahblah.mp3' in result:
+            self.assertTrue
+
+        self.assertEqual (len(result), 3)
 
 
     '''
     files in the above cwd directory
     '''
     def testListDirectory2 (self):
-        result = basic.listDirectory ('../testsource1', ['.jpg', '.mp3'])
+        result = basic.listDirectory ('../testsource1',
+        (['.*\.jpg','.*\.mp3'],['ab.*']))
 
         if '../testsource1/file5.jpg' in result:
             self.assertTrue
@@ -121,12 +129,25 @@ class TestClasses (unittest.TestCase):
     basic connection with acopy
     '''
     def testListDirectory3 (self):
-        result = basic.listDirectory ('testsource', ['.jpg', '.mp3'])
+        result = basic.listDirectory ('testsource',(['.*\.jpg',
+        '.*\.mp3'],['ab.*']))
         basic.acopy ('testsource','testtarget',  result)
         self.assertTrue (os.path.exists ('testtarget/file5.jpg'))
         self.assertTrue (os.path.exists ('testtarget/file6.mp3'))
         self.assertFalse (os.path.exists ('testtarget/file4.txt'))
 
+    '''
+    there is a match in nonformats
+    '''
+    def testListDirectory4 (self):
+        result = basic.listDirectory ('testsource',
+        (['.*\.jpg','.*\.mp3'],['blah.*']))
+
+        if '../testsource1/file5.jpg' in result:
+            self.assertTrue
+        if '../testsource1/file6.mp3' in result:
+            self.assertFalse
+        self.assertEqual (len(result), 2)
 
     '''
     checking the proper creation of db and dictionary
@@ -146,7 +167,7 @@ class TestClasses (unittest.TestCase):
             self.assertTrue
         
         default =\
-        {'.jpg':True,'.mp3':True,'.tex':True,'.txt':False}
+        {'.*\.jpg':True,'.*\.mp3':True,'.*\.tex':True,'.*\.txt':False}
         
         #for i in default if i in myShelf['formats'].keys())
         for i in default:
@@ -158,7 +179,7 @@ class TestClasses (unittest.TestCase):
     def testaccessFormats1 (self): 
         formats = basic.accessFormats()
 
-        default = ['.jpg','.mp3','.tex']
+        default = ['.*\.jpg','.*\.mp3','.*\.tex']
         for i in default:
             self.assertTrue (i in formats)
 
@@ -175,7 +196,7 @@ class TestClasses (unittest.TestCase):
         myShelf = shelve.open ('ext_formats.db', writeback=True)
 
         default =\
-        {'.jpg':True,'.mp3':True,'.tex':True,'.txt':False}
+        {'.*\.jpg':True,'.*\.mp3':True,'.*\.tex':True,'.*\.txt':False}
 
         myShelf['formats'] = default
 
@@ -212,10 +233,10 @@ class TestClasses (unittest.TestCase):
         myShelf = shelve.open ('ext_formats.db', writeback=True)
 
         default =\
-        {'.jpg':True,'.mp3':True,'.tex':True,'.txt':False}
+        {'.*\.jpg':True,'.*\.mp3':True,'.*\.tex':True,'.*\.txt':False}
 
         new = \
-        {'.avi':True,'.mpeg':True,'.doc':True,'.adoc':False}
+        {'.*\.avi':True,'.*\.mpeg':True,'.*\.doc':True,'.*\.adoc':False}
         myShelf['formats'] = default
 
         myShelf.close()
@@ -238,7 +259,7 @@ class TestClasses (unittest.TestCase):
     def testWriteFormats2(self):
 
         new = \
-        {'.avi':True,'.mpeg':True,'.doc':True,'.adoc':False}
+        {'.*\.avi':True,'.*\.mpeg':True,'.*\.doc':True,'.*\.adoc':False}
 
 
         basic.writeFormats (new)
@@ -272,9 +293,10 @@ class TestClasses (unittest.TestCase):
         basic.framer1 (['testsource', 'testtarget'])
         self.assertTrue (os.path.exists ('testtarget/file5.jpg'))
         self.assertTrue (os.path.exists ('testtarget/file6.mp3'))
+        self.assertTrue (os.path.exists ('testtarget/blahblah.mp3'))
         self.assertTrue (os.path.exists ('testtarget/file10.tex'))
         self.assertFalse (os.path.exists('testtarget/file4.txt'))
-        self.assertEqual (len(os.listdir('testtarget')), 3)
+        self.assertEqual (len(os.listdir('testtarget')), 4)
        
 
     '''
@@ -283,20 +305,20 @@ class TestClasses (unittest.TestCase):
     def testChangeFormats (self):
 
         basic. defaultFormats()
-        basic.changeFormats ('add', ['.avi'])
+        basic.changeFormats ('add', ['.*\.avi'])
 
         myShelf = shelve.open ('ext_formats.db')
         formats = myShelf['formats'].keys()
         myShelf.close()
        
         ##checking complete list in the extlist
-        supposed = ['.jpg','.mp3','.tex', 'txt', 'avi']
+        supposed = ['.*\.jpg','.*\.mp3','.*\.tex', '.*\.txt','.*\.avi']
 
-        self.assertTrue ('.jpg' in formats)
-        self.assertTrue ('.mp3' in formats)
-        self.assertTrue ('.tex' in formats)
-        self.assertTrue ('.txt' in formats)
-        self.assertTrue ('.avi' in formats)
+        self.assertTrue ('.*\.jpg' in formats)
+        self.assertTrue ('.*\.mp3' in formats)
+        self.assertTrue ('.*\.tex' in formats)
+        self.assertTrue ('.*\.txt' in formats)
+        self.assertTrue ('.*\.avi' in formats)
 
         self.assertEqual (len(formats), len(supposed))
 
