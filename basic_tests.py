@@ -132,7 +132,7 @@ class TestClasses (unittest.TestCase):
     checking the proper creation of db and dictionary
     '''
     def testdefaultFormats1 (self):
-        formats = basic.defaultFormats()
+        formats, nonformats = basic.defaultFormats()
         
         self.assertTrue (os.path.exists ('ext_formats.db'))
 
@@ -140,6 +140,9 @@ class TestClasses (unittest.TestCase):
         myShelf = shelve.open ('ext_formats.db')
         
         if 'formats' in myShelf:
+            self.assertTrue
+
+        if 'nonformats' in myShelf:
             self.assertTrue
         
         default =\

@@ -59,10 +59,12 @@ class NoSuchFile (Exception):
     
 def defaultFormats():
     formats = {'.jpg':True,'.mp3':True,'.tex':True,'.txt':False}
+    nonformats = {'tex':True}
     myShelf = shelve.open ('ext_formats.db', writeback = True)
     myShelf['formats'] = formats
+    myShelf['nonformats'] = nonformats
     myShelf.close()
-    return formats
+    return formats, nonformats
 
 
 
@@ -75,6 +77,7 @@ def accessFormats(items_to_display = True):
         formats = myShelf['formats']
     except:
         formats = defaultFormats()
+        formats = formats[0]
     finally:
         myShelf.close()
         # here I should turn a dict into a list, of True valued keys
